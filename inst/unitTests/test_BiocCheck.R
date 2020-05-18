@@ -275,6 +275,22 @@ test_badFiles <- function(){
     unlink(pkgdir)
 }
 
+test_largeDataFile <- function(){
+    pkgdir <- create_test_package("testpkg")
+    dir.create(file.path(pkgdir, "data"))
+    datafile <- file.path(pkgdir, "data/large_data.rda")
+    file.create(datafile)
+    zz <- base::file(datafile, "w")  # open an output file connection
+    for(iter in seq_len(3e5)){ # 1e5 iter = 2MB
+        cat("Line number: ", iter, "\n", file = zz)
+    }
+    close(zz)
+    BiocCheck:::checkLargeFiles(pkgdir)
+    checkEquals(1, .warning$getNum())
+    .zeroCounters()
+    unlink(pkgdir)
+}
+
 test_checkBBScompatibility <- function()
 {
     pkgdir <- UNIT_TEST_TEMPDIR

@@ -219,6 +219,29 @@ checkIndivFileSizes <- function(pkgdir)
     }
 }
 
+checkLargeFiles <- function(pkgdir){
+    pkgType <- getPkgType(pkgdir)
+    if (is.na(pkgType) ||  pkgType == "Software") {
+        maxSize <- 5*10^6 ## 5MB
+        allFiles <- list.files(file.path(pkgdir, "data"), all.files=TRUE)
+        allFilesFullName <- file.path(pkgdir, "data", allFiles) 
+        
+        sizes <- file.size(allFilesFullName)
+        largeFiles <- paste(allFiles[sizes > maxSize], collapse=" ")
+        if (any(sizes > maxSize)) {
+            handleWarning(
+                "Found the following large files (over 5MB) in the ",
+                "'data/' folder: ",
+                paste0("'", largeFiles, "'", collapse = " "),
+                "\nConsider uploading them to ExperimentHub ",
+                "<https://www.bioconductor.org/packages/ExperimentHub/> or ",
+                "AnnotationHub <https://bioconductor.org/packages/AnnotationHub/>."
+            )
+            return(TRUE)
+        }
+    }
+}
+
 checkBiocViews <- function(pkgdir)
 {
     dirty <- FALSE

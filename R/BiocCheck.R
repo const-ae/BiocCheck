@@ -168,6 +168,12 @@ BiocCheck <- function(package=".", ...)
         checkIndivFileSizes(package_dir)
     }
 
+    if (is.null(dots[["no-check-file-size"]])){
+        handleCheck("Checking files sizes in data...")
+        checkLargeFiles(package_dir)
+    }
+    
+    
     if (is.null(dots[["no-check-bioc-views"]]))
     {
         handleCheck("Checking biocViews...")
